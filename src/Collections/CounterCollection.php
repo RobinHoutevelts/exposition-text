@@ -25,6 +25,19 @@ final class CounterCollection extends AbstractMetricCollection
 		return $collection;
 	}
 
+    public static function merge( NamesMetric $metricName, self $counterCollection, self ...$counterCollections ) : self
+    {
+        $collection = self::withMetricName( $metricName );
+
+        array_unshift($counterCollections, $counterCollection);
+        unset($counterCollection);
+        foreach ($counterCollections as $counterCollection) {
+            $collection->add(...$counterCollection->counters);
+        }
+
+        return $collection;
+    }
+
 	public function add( Counter $counter, Counter ...$counters ) : void
 	{
 		$this->counters[] = $counter;

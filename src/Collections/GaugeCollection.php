@@ -31,6 +31,19 @@ final class GaugeCollection extends AbstractMetricCollection
 		return $collection;
 	}
 
+    public static function merge( NamesMetric $metricName, self $gaugeCollection, self ...$gaugeCollections ) : self
+    {
+        $collection = self::withMetricName( $metricName );
+
+        array_unshift($gaugeCollections, $gaugeCollection);
+        unset($gaugeCollection);
+        foreach ($gaugeCollections as $gaugeCollection) {
+            $collection->add(...$gaugeCollection->gauges);
+        }
+
+        return $collection;
+    }
+
 	public function add( Gauge $gauge, Gauge ...$gauges ) : void
 	{
 		$this->gauges[] = $gauge;
